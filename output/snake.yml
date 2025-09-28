@@ -1,0 +1,35 @@
+name: GitHub Readme Snake Animation
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'  # Mise à jour quotidienne
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install github-readme-snake
+        run: npm install -g github-readme-snake
+
+      - name: Generate snake animation
+        run: npx github-readme-snake > ./output/snake.svg
+
+      - name: Commit and push
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./output/snake.svg
+          git commit -m "Update snake animation" || echo "No changes to commit"
+          git push
